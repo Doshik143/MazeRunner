@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import StartPage from "./pages/StartPage/StartPage";
 import GamePage from "./pages/GamePage/GamePage";
+import ResultsPage from "./pages/ResultsPage/ResultsPage";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("start");
@@ -10,8 +11,16 @@ function App() {
     setCurrentPage("game");
   };
 
+  const handleGameEnd = () => {
+    setCurrentPage("results");
+  };
+
   const handleReturnToStart = () => {
     setCurrentPage("start");
+  };
+
+  const handleRestart = () => {
+    setCurrentPage("game");
   };
 
   const renderCurrentPage = () => {
@@ -19,7 +28,19 @@ function App() {
       case "start":
         return <StartPage onStartGame={handleStartGame} />;
       case "game":
-        return <GamePage onReturnToStart={handleReturnToStart} />;
+        return (
+          <GamePage
+            onGameEnd={handleGameEnd}
+            onReturnToStart={handleReturnToStart}
+          />
+        );
+      case "results":
+        return (
+          <ResultsPage
+            onRestart={handleRestart}
+            onReturnToStart={handleReturnToStart}
+          />
+        );
       default:
         return <StartPage onStartGame={handleStartGame} />;
     }
