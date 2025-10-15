@@ -9,8 +9,10 @@ const MazeGrid = ({
     const isPlayer =
       playerPosition.x === rowIndex && playerPosition.y === cellIndex;
     const isExit = exitPosition.x === rowIndex && exitPosition.y === cellIndex;
+    const isWall = maze[rowIndex] && maze[rowIndex][cellIndex] === 1;
 
     let cellClass = "maze-cell";
+    if (isWall) cellClass += " maze-cell--wall";
     if (isPlayer) cellClass += " maze-cell--player";
     if (isExit) cellClass += " maze-cell--exit";
 
@@ -18,6 +20,7 @@ const MazeGrid = ({
       <div key={cellIndex} className={cellClass}>
         {isPlayer && "👤"}
         {isExit && !isPlayer && "🚪"}
+        {isWall && !isPlayer && !isExit && "🧱"}
       </div>
     );
   };
