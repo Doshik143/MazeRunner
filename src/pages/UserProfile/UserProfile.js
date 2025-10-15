@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useUserStats } from "../../context/UserStatsContext";
 import Modal from "../../components/UI/Modal/Modal";
 import { PageContainer, Card, Button } from "../../App.styles";
 import {
@@ -14,9 +15,10 @@ const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [showEditModal, setShowEditModal] = useState(false);
+  const { getUserStats } = useUserStats();
   const [userData, setUserData] = useState({
-    username: `Гравець_${userId}`,
-    email: `player${userId}@example.com`,
+    username: `Гравець_${userId.slice(-4)}`,
+    email: `player${userId.slice(-4)}@example.com`,
     favoriteDifficulty: "medium",
   });
 
@@ -28,12 +30,7 @@ const UserProfile = () => {
     defaultValues: userData,
   });
 
-  const userStats = {
-    gamesPlayed: 12,
-    bestTime: 45,
-    bestSteps: 28,
-    completionRate: "75%",
-  };
+  const userStats = getUserStats(userId);
 
   const handleEditSubmit = (data) => {
     setUserData(data);
@@ -57,16 +54,20 @@ const UserProfile = () => {
               <span className="stat-label">Ігор зіграно</span>
             </div>
             <div className="stat">
-              <span className="stat-value">{userStats.bestTime}с</span>
+              <span className="stat-value">{userStats.gamesWon}</span>
+              <span className="stat-label">Перемог</span>
+            </div>
+            <div className="stat">
+              <span className="stat-value">
+                {userStats.bestTime !== null ? `${userStats.bestTime}с` : "---"}
+              </span>
               <span className="stat-label">Найкращий час</span>
             </div>
             <div className="stat">
-              <span className="stat-value">{userStats.bestSteps}</span>
-              <span className="stat-label">Найкращий результат</span>
-            </div>
-            <div className="stat">
-              <span className="stat-value">{userStats.completionRate}</span>
-              <span className="stat-label">Успішність</span>
+              <span className="stat-value">
+                {userStats.bestSteps !== null ? userStats.bestSteps : "---"}
+              </span>
+              <span className="stat-label">Найкращі кроки</span>
             </div>
           </StatsGrid>
 
@@ -93,16 +94,16 @@ const UserProfile = () => {
           }}
         >
           <Button variant="primary" onClick={() => navigate(`/user/${userId}`)}>
-            🏠 На головну
+            На головну
           </Button>
           <Button
             variant="secondary"
             onClick={() => navigate(`/user/${userId}/game`)}
           >
-            🎮 Грати
+            Грати
           </Button>
           <Button variant="secondary" onClick={() => setShowEditModal(true)}>
-            ✏️ Редагувати профіль
+            Редагувати профіль
           </Button>
         </div>
       </Card>

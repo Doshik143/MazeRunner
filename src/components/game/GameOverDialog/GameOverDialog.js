@@ -9,7 +9,7 @@ const GameOverDialog = ({ isOpen, onClose, onRestart, gameStats }) => {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isSuccess ? "🎉 Вітаємо!" : "⏰ Не пощастило("}
+      title={isSuccess ? "🎉 Вітаємо!" : "Не пощастило("}
     >
       <div className="game-over-dialog">
         <div className="game-over-stats">
@@ -39,10 +39,7 @@ const GameOverDialog = ({ isOpen, onClose, onRestart, gameStats }) => {
 
         <div className="game-over-actions">
           <Button variant="secondary" onClick={onClose}>
-            На головну
-          </Button>
-          <Button variant="primary" onClick={onRestart}>
-            Грати знову
+            Продовжити
           </Button>
         </div>
       </div>

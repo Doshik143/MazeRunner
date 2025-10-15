@@ -58,7 +58,7 @@ export const ProfileInfo = styled.div`
       font-size: 1.4rem;
       font-weight: 600;
       text-align: center;
-      background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+      background: #ffffff;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
