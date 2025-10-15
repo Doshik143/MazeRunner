@@ -6,7 +6,9 @@ export const AppContainer = styled.div`
   color: white;
   font-family: "Arial", sans-serif;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 
   &::before {
     content: "";
@@ -32,18 +34,19 @@ export const AppContainer = styled.div`
       );
     animation: float 8s ease-in-out infinite;
     pointer-events: none;
+    overflow: hidden;
   }
 
   @keyframes float {
     0%,
     100% {
-      transform: translate(0, 0) scale(1);
+      transform: translate(0, 0);
     }
     33% {
-      transform: translate(-10px, 10px) scale(1.02);
+      transform: translate(-5px, 5px);
     }
     66% {
-      transform: translate(10px, -5px) scale(0.98);
+      transform: translate(5px, -5px);
     }
   }
 `;
@@ -188,11 +191,12 @@ export const PageContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  min-height: 100vh;
+  min-height: calc(100vh - 4rem);
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: 1rem;
@@ -203,7 +207,6 @@ export const PageContainer = styled.div`
   }
 `;
 
-// Додаткові компоненти для узгодженості
 export const FlexContainer = styled.div`
   display: flex;
   gap: ${(props) => props.gap || "1rem"};

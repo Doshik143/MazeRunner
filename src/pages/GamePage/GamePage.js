@@ -1,15 +1,22 @@
-import { useState, useEffect } from "react";
-import Header from "../../components/layout/Header/Header";
-import MazeGrid from "../../components/game/MazeGrid/MazeGrid";
-import GameControls from "../../components/game/GameControls/GameControls";
-import GameOverDialog from "../../components/game/GameOverDialog/GameOverDialog";
-import Button from "../../components/UI/Button/Button";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGame } from "../../hooks/useGame";
 import { useGameControls } from "../../hooks/useGameControls";
 import { useSettings } from "../../context/SettingsContext";
-import "./GamePage.css";
+import MazeGrid from "../../components/game/MazeGrid/MazeGrid";
+import GameControls from "../../components/game/GameControls/GameControls";
+import GameOverDialog from "../../components/game/GameOverDialog/GameOverDialog";
+import { PageContainer, Card, Button } from "../../App.styles";
+import {
+  GameHeader,
+  GameInfo,
+  GameContent,
+  ControlSection,
+} from "./GamePage.styles";
 
-const GamePage = ({ onGameEnd, onReturnToStart }) => {
+const GamePage = () => {
+  const { userId = "default" } = useParams();
+  const navigate = useNavigate();
   const { settings } = useSettings();
   const { gameState, movePlayer, endGame, getGameTime, startGame } = useGame();
   const { activeDirection, handleButtonMove } = useGameControls(movePlayer);
@@ -40,18 +47,11 @@ const GamePage = ({ onGameEnd, onReturnToStart }) => {
 
   const handleNextLevel = () => {
     setShowGameOverDialog(false);
-    const nextDifficulty =
-      settings.difficulty === "easy"
-        ? "medium"
-        : settings.difficulty === "medium"
-        ? "hard"
-        : "hard";
-    startGame(nextDifficulty);
+    navigate(`/user/${userId}/results`);
   };
 
-  const handleCloseDialog = () => {
-    setShowGameOverDialog(false);
-    onReturnToStart();
+  const handleReturnToStart = () => {
+    navigate(`/user/${userId}`);
   };
 
   const gameStats = {
@@ -64,57 +64,62 @@ const GamePage = ({ onGameEnd, onReturnToStart }) => {
   };
 
   return (
-    <div className="game-page">
-      <Header title="Maze Runner - Game" />
+    <PageContainer>
+      <Card>
+        <GameHeader>
+          <h1>Maze Runner - Game</h1>
+          <p>Гравець: #{userId}</p>
+        </GameHeader>
 
-      <main className="game-page__content">
-        <div className="game-page__info">
-          <div className="game-stats">
-            <span>Час: {getGameTime()}с</span>
-            <span> | Кроки: {gameState.steps} | </span>
-            <span>
-              Складність:{" "}
-              {settings.difficulty === "easy"
-                ? "Легка"
-                : settings.difficulty === "medium"
-                ? "Середня"
-                : "Складна"}
-            </span>
-          </div>
-        </div>
+        <GameInfo>
+          <span>⏱ Час: {getGameTime()}с</span>
+          <span> | Кроки: {gameState.steps} | </span>
+          <span>
+            Складність:{" "}
+            {settings.difficulty === "easy"
+              ? "Легка"
+              : settings.difficulty === "medium"
+              ? "Середня"
+              : "Складна"}
+          </span>
+        </GameInfo>
 
-        <MazeGrid
-          maze={gameState.maze}
-          playerPosition={gameState.playerPosition}
-          exitPosition={gameState.exitPosition}
-        />
-
-        {settings.controls === "buttons" && (
-          <GameControls
-            onMove={handleManualMove}
-            activeDirection={activeDirection}
+        <GameContent>
+          <MazeGrid
+            maze={gameState.maze}
+            playerPosition={gameState.playerPosition}
+            exitPosition={gameState.exitPosition}
           />
-        )}
+        </GameContent>
 
-        <div className="game-page__controls">
-          <Button variant="secondary" onClick={onReturnToStart}>
-            На головну
-          </Button>
-          <Button variant="primary" onClick={handleEndGame}>
-            Завершити гру
-          </Button>
-        </div>
-      </main>
+        <ControlSection>
+          {settings.controls === "buttons" && (
+            <GameControls
+              onMove={handleManualMove}
+              activeDirection={activeDirection}
+            />
+          )}
+
+          <div>
+            <Button variant="secondary" onClick={handleReturnToStart}>
+              На головну
+            </Button>
+            <Button variant="primary" onClick={handleEndGame}>
+              Завершити гру
+            </Button>
+          </div>
+        </ControlSection>
+      </Card>
 
       <GameOverDialog
         isOpen={showGameOverDialog}
-        onClose={handleCloseDialog}
+        onClose={handleReturnToStart}
         onRestart={handleRestart}
         onNextLevel={handleNextLevel}
         gameStats={gameStats}
-        hasNextLevel={settings.difficulty !== "hard"}
+        hasNextLevel={gameState.level < 10}
       />
-    </div>
+    </PageContainer>
   );
 };
 
