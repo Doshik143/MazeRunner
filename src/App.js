@@ -2,9 +2,10 @@ import "./App.css";
 import StartPage from "./pages/StartPage/StartPage";
 import GamePage from "./pages/GamePage/GamePage";
 import ResultsPage from "./pages/ResultsPage/ResultsPage";
+import { SettingsProvider } from "./context/SettingsContext";
 import { useNavigation } from "./hooks/useNavigation";
 
-function App() {
+function AppContent() {
   const { currentPage, navigateToStart, navigateToGame, navigateToResults } =
     useNavigation();
 
@@ -32,6 +33,14 @@ function App() {
   };
 
   return <div className="App">{renderCurrentPage()}</div>;
+}
+
+function App() {
+  return (
+    <SettingsProvider>
+      <AppContent />
+    </SettingsProvider>
+  );
 }
 
 export default App;

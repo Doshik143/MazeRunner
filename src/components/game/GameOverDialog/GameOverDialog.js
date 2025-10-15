@@ -2,28 +2,17 @@ import Modal from "../../UI/Modal/Modal";
 import Button from "../../UI/Button/Button";
 import "./GameOverDialog.css";
 
-const GameOverDialog = ({
-  isOpen,
-  onClose,
-  onRestart,
-  onNextLevel,
-  gameStats,
-  hasNextLevel = true,
-}) => {
-  const { level, steps, time, isSuccess } = gameStats;
+const GameOverDialog = ({ isOpen, onClose, onRestart, gameStats }) => {
+  const { steps, time, isSuccess } = gameStats;
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isSuccess ? "🎉 Вітаємо!" : "⏰ Час вийшов"}
+      title={isSuccess ? "🎉 Вітаємо!" : "⏰ Не пощастило("}
     >
       <div className="game-over-dialog">
         <div className="game-over-stats">
-          <div className="stat-item">
-            <span className="stat-label">Рівень:</span>
-            <span className="stat-value">{level}</span>
-          </div>
           <div className="stat-item">
             <span className="stat-label">Кроки:</span>
             <span className="stat-value">{steps}</span>
@@ -55,11 +44,6 @@ const GameOverDialog = ({
           <Button variant="primary" onClick={onRestart}>
             Грати знову
           </Button>
-          {isSuccess && hasNextLevel && (
-            <Button variant="primary" onClick={onNextLevel}>
-              Наступний рівень
-            </Button>
-          )}
         </div>
       </div>
     </Modal>

@@ -12,20 +12,21 @@ export const useGame = () => {
     exitPosition: { x: 4, y: 4 },
   });
 
-  const startGame = useCallback((level = 1) => {
+  const startGame = useCallback((difficulty = "medium") => {
     const startTime = new Date();
-    const initialMaze = generateMaze(level);
+    const initialMaze = generateMaze(difficulty);
     const playerStart = findStartPosition(initialMaze);
+    const exitPos = findExitPosition(initialMaze);
 
     setGameState({
-      level,
+      difficulty,
       steps: 0,
       isPlaying: true,
       startTime,
       endTime: null,
       playerPosition: playerStart,
       maze: initialMaze,
-      exitPosition: findExitPosition(initialMaze),
+      exitPosition: exitPos,
     });
   }, []);
 
@@ -38,16 +39,17 @@ export const useGame = () => {
         direction
       );
 
-      //CheckingPossibilityOfMovement
       if (!isValidMove(newPosition, prevState.maze)) {
         return prevState;
       }
+
+      const exitReached = isExitReached(newPosition, prevState.exitPosition);
 
       return {
         ...prevState,
         playerPosition: newPosition,
         steps: prevState.steps + 1,
-        isPlaying: !isExitReached(newPosition, prevState.exitPosition),
+        isPlaying: !exitReached,
       };
     });
   }, []);
@@ -73,20 +75,105 @@ export const useGame = () => {
     });
   }, []);
 
-  const generateMaze = (level) => {
-    //TemporaryPlugForMaze
-    const size = 5 + level;
-    return Array(size)
+  const generateMaze = (difficulty) => {
+    const sizes = {
+      easy: 9,
+      medium: 13,
+      hard: 17,
+    };
+
+    const size = sizes[difficulty] || 13;
+    const maze = Array(size)
       .fill()
-      .map(() => Array(size).fill(0));
+      .map(() => Array(size).fill(1));
+    const visited = Array(size)
+      .fill()
+      .map(() => Array(size).fill(false));
+    const stack = [[1, 1]];
+
+    maze[1][1] = 0;
+    visited[1][1] = true;
+
+    const directions = [
+      [0, 2],
+      [2, 0],
+      [0, -2],
+      [-2, 0],
+    ];
+
+    while (stack.length > 0) {
+      const [x, y] = stack[stack.length - 1];
+      const availableDirs = directions.filter(([dx, dy]) => {
+        const nx = x + dx;
+        const ny = y + dy;
+        return (
+          nx > 0 && nx < size - 1 && ny > 0 && ny < size - 1 && !visited[nx][ny]
+        );
+      });
+
+      if (availableDirs.length > 0) {
+        const [dx, dy] =
+          availableDirs[Math.floor(Math.random() * availableDirs.length)];
+        const nx = x + dx;
+        const ny = y + dy;
+
+        maze[x + dx / 2][y + dy / 2] = 0;
+        maze[nx][ny] = 0;
+        visited[nx][ny] = true;
+        stack.push([nx, ny]);
+      } else {
+        stack.pop();
+      }
+    }
+
+    for (let i = 1; i < size - 1; i++) {
+      for (let j = 1; j < size - 1; j++) {
+        if (Math.random() < 0.1 && maze[i][j] === 1) {
+          const neighbors = [
+            [0, 1],
+            [1, 0],
+            [0, -1],
+            [-1, 0],
+          ];
+          const emptyNeighbors = neighbors.filter(
+            ([dx, dy]) => maze[i + dx] && maze[i + dx][j + dy] === 0
+          );
+          if (emptyNeighbors.length <= 1) {
+            maze[i][j] = 0;
+          }
+        }
+      }
+    }
+
+    maze[1][1] = 0;
+    maze[size - 2][size - 2] = 0;
+
+    let exitX = size - 2;
+    let exitY = size - 2;
+
+    const exitDirections = [
+      [0, 1],
+      [1, 0],
+      [0, -1],
+      [-1, 0],
+    ];
+    const validExits = exitDirections.filter(
+      ([dx, dy]) => maze[exitX + dx] && maze[exitX + dx][exitY + dy] === 0
+    );
+
+    if (validExits.length === 0) {
+      maze[exitX][exitY - 1] = 0;
+    }
+
+    return maze;
   };
 
   const findStartPosition = (maze) => {
-    return { x: 0, y: 0 };
+    return { x: 1, y: 1 };
   };
 
   const findExitPosition = (maze) => {
-    return { x: maze.length - 1, y: maze[0].length - 1 };
+    return { x: maze.length - 2, y: maze[0].length - 2 };
   };
 
   const calculateNewPosition = (currentPos, direction) => {
@@ -100,12 +187,15 @@ export const useGame = () => {
   };
 
   const isValidMove = (position, maze) => {
-    return (
-      position.x >= 0 &&
-      position.y >= 0 &&
-      position.x < maze.length &&
-      position.y < maze[0].length
-    );
+    if (
+      position.x < 0 ||
+      position.y < 0 ||
+      position.x >= maze.length ||
+      position.y >= maze[0].length
+    ) {
+      return false;
+    }
+    return maze[position.x][position.y] === 0;
   };
 
   const isExitReached = (playerPos, exitPos) => {

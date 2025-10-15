@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import Button from "../../UI/Button/Button";
+import Button from "../../components/UI/Button/Button";
 import "./SettingsForm.css";
 
 const SettingsForm = ({ initialSettings, onSubmit, onCancel }) => {
@@ -40,45 +40,6 @@ const SettingsForm = ({ initialSettings, onSubmit, onCancel }) => {
           {errors.difficulty && (
             <span className="error-message">{errors.difficulty.message}</span>
           )}
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="mazeSize">Розмір лабіринту:</label>
-          <input
-            id="mazeSize"
-            type="number"
-            min="3"
-            max="10"
-            {...register("mazeSize", {
-              required: "Введіть розмір лабіринту",
-              min: { value: 3, message: "Мінімальний розмір: 3" },
-              max: { value: 10, message: "Максимальний розмір: 10" },
-            })}
-            className={errors.mazeSize ? "error" : ""}
-          />
-          {errors.mazeSize && (
-            <span className="error-message">{errors.mazeSize.message}</span>
-          )}
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="gameSpeed">Швидкість гри:</label>
-          <select
-            id="gameSpeed"
-            {...register("gameSpeed", { required: "Оберіть швидкість" })}
-          >
-            <option value="slow">Повільна</option>
-            <option value="normal">Нормальна</option>
-            <option value="fast">Швидка</option>
-          </select>
-        </div>
-
-        <div className="form-group checkbox-group">
-          <label className="checkbox-label">
-            <input type="checkbox" {...register("enableSounds")} />
-            <span className="checkmark"></span>
-            Увімкнути звуки
-          </label>
         </div>
 
         <div className="form-group">

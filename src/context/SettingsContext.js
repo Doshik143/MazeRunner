@@ -2,9 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const defaultSettings = {
   difficulty: "medium",
-  mazeSize: 5,
-  gameSpeed: "normal",
-  enableSounds: true,
   controls: "keyboard",
 };
 
