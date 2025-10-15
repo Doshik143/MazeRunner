@@ -1,48 +1,33 @@
-import { useState } from "react";
 import "./App.css";
 import StartPage from "./pages/StartPage/StartPage";
 import GamePage from "./pages/GamePage/GamePage";
 import ResultsPage from "./pages/ResultsPage/ResultsPage";
+import { useNavigation } from "./hooks/useNavigation";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("start");
-
-  const handleStartGame = () => {
-    setCurrentPage("game");
-  };
-
-  const handleGameEnd = () => {
-    setCurrentPage("results");
-  };
-
-  const handleReturnToStart = () => {
-    setCurrentPage("start");
-  };
-
-  const handleRestart = () => {
-    setCurrentPage("game");
-  };
+  const { currentPage, navigateToStart, navigateToGame, navigateToResults } =
+    useNavigation();
 
   const renderCurrentPage = () => {
     switch (currentPage) {
       case "start":
-        return <StartPage onStartGame={handleStartGame} />;
+        return <StartPage onStartGame={navigateToGame} />;
       case "game":
         return (
           <GamePage
-            onGameEnd={handleGameEnd}
-            onReturnToStart={handleReturnToStart}
+            onGameEnd={navigateToResults}
+            onReturnToStart={navigateToStart}
           />
         );
       case "results":
         return (
           <ResultsPage
-            onRestart={handleRestart}
-            onReturnToStart={handleReturnToStart}
+            onRestart={navigateToGame}
+            onReturnToStart={navigateToStart}
           />
         );
       default:
-        return <StartPage onStartGame={handleStartGame} />;
+        return <StartPage onStartGame={navigateToGame} />;
     }
   };
 
