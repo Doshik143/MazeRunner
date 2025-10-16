@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { useGame } from "../../hooks/useGame";
 import { useGameControls } from "../../hooks/useGameControls";
-import { useSettings } from "../../context/SettingsContext";
-import { useUserStats } from "../../context/UserStatsContext";
+import { selectSettings } from "../../store/slices/settingsSlice";
+import { updateUserStats } from "../../store/slices/gameStatsSlice";
 import MazeGrid from "../../components/game/MazeGrid/MazeGrid";
 import GameControls from "../../components/game/GameControls/GameControls";
 import GameOverDialog from "../../components/game/GameOverDialog/GameOverDialog";
@@ -13,13 +14,16 @@ import {
   GameInfo,
   GameContent,
   ControlSection,
+  GameWithControls,
+  MazeContainer,
+  ControlsContainer,
 } from "./GamePage.styles";
 
 const GamePage = () => {
   const { userId = "default" } = useParams();
   const navigate = useNavigate();
-  const { settings } = useSettings();
-  const { updateUserStats } = useUserStats();
+  const dispatch = useDispatch();
+  const settings = useSelector(selectSettings);
   const { gameState, movePlayer, endGame, getGameTime, startGame } = useGame();
   const { activeDirection, handleButtonMove } = useGameControls(movePlayer);
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
@@ -61,7 +65,7 @@ const GamePage = () => {
     };
 
     console.log("Збереження результатів:", gameResult);
-    updateUserStats(userId, gameResult);
+    dispatch(updateUserStats({ userId, gameResult }));
 
     navigate(`/user/${userId}/results`, {
       state: {
@@ -101,31 +105,52 @@ const GamePage = () => {
           </span>
         </GameInfo>
 
-        <GameContent>
-          <MazeGrid
-            maze={gameState.maze}
-            playerPosition={gameState.playerPosition}
-            exitPosition={gameState.exitPosition}
-          />
-        </GameContent>
-
-        <ControlSection>
-          {settings.controls === "buttons" && (
-            <GameControls
-              onMove={handleManualMove}
-              activeDirection={activeDirection}
+        {settings.controls === "buttons" ? (
+          <GameWithControls>
+            <MazeContainer>
+              <MazeGrid
+                maze={gameState.maze}
+                playerPosition={gameState.playerPosition}
+                exitPosition={gameState.exitPosition}
+              />
+            </MazeContainer>
+            <ControlsContainer>
+              <GameControls
+                onMove={handleManualMove}
+                activeDirection={activeDirection}
+              />
+              <div>
+                <Button variant="secondary" onClick={handleReturnToStart}>
+                  На головну
+                </Button>
+                <Button variant="primary" onClick={handleEndGame}>
+                  Завершити гру
+                </Button>
+              </div>
+            </ControlsContainer>
+          </GameWithControls>
+        ) : (
+          <GameContent>
+            <MazeGrid
+              maze={gameState.maze}
+              playerPosition={gameState.playerPosition}
+              exitPosition={gameState.exitPosition}
             />
-          )}
+          </GameContent>
+        )}
 
-          <div>
-            <Button variant="secondary" onClick={handleReturnToStart}>
-              На головну
-            </Button>
-            <Button variant="primary" onClick={handleEndGame}>
-              Завершити гру
-            </Button>
-          </div>
-        </ControlSection>
+        {settings.controls !== "buttons" && (
+          <ControlSection>
+            <div>
+              <Button variant="secondary" onClick={handleReturnToStart}>
+                На головну
+              </Button>
+              <Button variant="primary" onClick={handleEndGame}>
+                Завершити гру
+              </Button>
+            </div>
+          </ControlSection>
+        )}
       </Card>
 
       <GameOverDialog

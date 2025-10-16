@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useUserStats } from "../../context/UserStatsContext";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUserStats } from "../../store/slices/gameStatsSlice";
+import {
+  selectUserProfile,
+  updateUserProfile,
+} from "../../store/slices/userSlice";
 import Modal from "../../components/UI/Modal/Modal";
 import { PageContainer, Card, Button } from "../../App.styles";
 import {
@@ -14,26 +19,22 @@ import {
 const UserProfile = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showEditModal, setShowEditModal] = useState(false);
-  const { getUserStats } = useUserStats();
-  const [userData, setUserData] = useState({
-    username: `Гравець_${userId.slice(-4)}`,
-    email: `player${userId.slice(-4)}@example.com`,
-    favoriteDifficulty: "medium",
-  });
+
+  const userStats = useSelector((state) => selectUserStats(state, userId));
+  const userProfile = useSelector((state) => selectUserProfile(state, userId));
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: userData,
+    defaultValues: userProfile,
   });
 
-  const userStats = getUserStats(userId);
-
   const handleEditSubmit = (data) => {
-    setUserData(data);
+    dispatch(updateUserProfile({ userId, profileData: data }));
     setShowEditModal(false);
   };
 
@@ -43,8 +44,8 @@ const UserProfile = () => {
         <ProfileHeader>
           <h1>👤 Профіль гравця</h1>
           <p>ID: #{userId}</p>
-          <h2>{userData.username}</h2>
-          <p>{userData.email}</p>
+          <h2>{userProfile.username}</h2>
+          <p>{userProfile.email}</p>
         </ProfileHeader>
 
         <ProfileInfo>
@@ -75,9 +76,9 @@ const UserProfile = () => {
             <h3>Уподобання</h3>
             <p>
               <strong>Улюблена складність:</strong>{" "}
-              {userData.favoriteDifficulty === "easy"
+              {userProfile.favoriteDifficulty === "easy"
                 ? "Легка"
-                : userData.favoriteDifficulty === "medium"
+                : userProfile.favoriteDifficulty === "medium"
                 ? "Середня"
                 : "Складна"}
             </p>
@@ -94,16 +95,22 @@ const UserProfile = () => {
           }}
         >
           <Button variant="primary" onClick={() => navigate(`/user/${userId}`)}>
-            На головну
+            🏠 На головну
           </Button>
           <Button
             variant="secondary"
             onClick={() => navigate(`/user/${userId}/game`)}
           >
-            Грати
+            🎮 Грати
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate(`/user/${userId}/leaderboard`)}
+          >
+            📊 Таблиця результатів
           </Button>
           <Button variant="secondary" onClick={() => setShowEditModal(true)}>
-            Редагувати профіль
+            ✏️ Редагувати профіль
           </Button>
         </div>
       </Card>

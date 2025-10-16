@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSettings } from "../../context/SettingsContext";
+import { useSelector } from "react-redux";
+import { selectSettings } from "../../store/slices/settingsSlice";
 import Modal from "../../components/UI/Modal/Modal";
 import SettingsForm from "../../components/forms/SettingsForm";
 import { PageContainer, Card, Button } from "../../App.styles";
@@ -12,14 +13,9 @@ import {
 
 const StartPage = () => {
   const [showSettings, setShowSettings] = useState(false);
-  const { settings, updateSettings } = useSettings();
+  const settings = useSelector(selectSettings);
   const navigate = useNavigate();
   const { userId = "default" } = useParams();
-
-  const handleSettingsSubmit = (newSettings) => {
-    updateSettings(newSettings);
-    setShowSettings(false);
-  };
 
   const handleStartGame = () => {
     navigate(`/user/${userId}/game`);
@@ -27,6 +23,10 @@ const StartPage = () => {
 
   const handleProfile = () => {
     navigate(`/user/${userId}/profile`);
+  };
+
+  const handleLeaderboard = () => {
+    navigate(`/user/${userId}/leaderboard`);
   };
 
   return (
@@ -57,6 +57,9 @@ const StartPage = () => {
             <Button variant="secondary" onClick={handleProfile}>
               Профіль
             </Button>
+            <Button variant="secondary" onClick={handleLeaderboard}>
+              Таблиця результатів
+            </Button>
           </ActionButtons>
         </Card>
 
@@ -67,7 +70,6 @@ const StartPage = () => {
         >
           <SettingsForm
             initialSettings={settings}
-            onSubmit={handleSettingsSubmit}
             onCancel={() => setShowSettings(false)}
           />
         </Modal>

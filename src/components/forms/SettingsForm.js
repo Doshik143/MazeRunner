@@ -1,4 +1,6 @@
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { updateSettings } from "../../store/slices/settingsSlice";
 import Button from "../../components/UI/Button/Button";
 import {
   SettingsForm,
@@ -12,7 +14,9 @@ import {
   FormActions,
 } from "./SettingsForm.styles";
 
-const SettingsFormComponent = ({ initialSettings, onSubmit, onCancel }) => {
+const SettingsFormComponent = ({ initialSettings, onCancel }) => {
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -23,7 +27,8 @@ const SettingsFormComponent = ({ initialSettings, onSubmit, onCancel }) => {
   });
 
   const handleFormSubmit = (data) => {
-    onSubmit(data);
+    dispatch(updateSettings(data));
+    onCancel();
   };
 
   const handleCancel = () => {
