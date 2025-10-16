@@ -1,6 +1,12 @@
 import Modal from "../../UI/Modal/Modal";
 import Button from "../../UI/Button/Button";
-import "./GameOverDialog.css";
+import {
+  DialogContainer,
+  DialogStats,
+  StatItem,
+  DialogMessage,
+  DialogActions,
+} from "./GameOverDialog.styles";
 
 const GameOverDialog = ({ isOpen, onClose, onRestart, gameStats }) => {
   const { steps, time, isSuccess } = gameStats;
@@ -11,38 +17,38 @@ const GameOverDialog = ({ isOpen, onClose, onRestart, gameStats }) => {
       onClose={onClose}
       title={isSuccess ? "🎉 Вітаємо!" : "Не пощастило("}
     >
-      <div className="game-over-dialog">
-        <div className="game-over-stats">
-          <div className="stat-item">
+      <DialogContainer>
+        <DialogStats>
+          <StatItem>
             <span className="stat-label">Кроки:</span>
             <span className="stat-value">{steps}</span>
-          </div>
-          <div className="stat-item">
+          </StatItem>
+          <StatItem>
             <span className="stat-label">Час:</span>
             <span className="stat-value">{time}с</span>
-          </div>
-          <div className="stat-item">
+          </StatItem>
+          <StatItem>
             <span className="stat-label">Результат:</span>
             <span className="stat-value success">
               {isSuccess ? "Перемога!" : "Спробуйте ще"}
             </span>
-          </div>
-        </div>
+          </StatItem>
+        </DialogStats>
 
-        <div className="game-over-message">
+        <DialogMessage>
           {isSuccess ? (
             <p>Ви успішно пройшли лабіринт! Бажаєте продовжити?</p>
           ) : (
             <p>Не вдалось знайти вихід. Спробуйте ще раз!</p>
           )}
-        </div>
+        </DialogMessage>
 
-        <div className="game-over-actions">
+        <DialogActions>
           <Button variant="secondary" onClick={onClose}>
             Продовжити
           </Button>
-        </div>
-      </div>
+        </DialogActions>
+      </DialogContainer>
     </Modal>
   );
 };

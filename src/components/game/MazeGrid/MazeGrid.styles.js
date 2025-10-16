@@ -1,0 +1,371 @@
+import styled from "styled-components";
+
+export const MazeGridContainer = styled.div`
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        45deg,
+        transparent 48%,
+        rgba(255, 255, 255, 0.03) 50%,
+        transparent 52%
+      ),
+      linear-gradient(
+        -45deg,
+        transparent 48%,
+        rgba(255, 255, 255, 0.03) 50%,
+        transparent 52%
+      );
+    background-size: 40px 40px;
+    animation: gridMove 20s linear infinite;
+    opacity: 0.3;
+  }
+
+  @keyframes gridMove {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 40px 40px;
+    }
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      transparent,
+      rgba(74, 107, 255, 0.1),
+      rgba(255, 107, 107, 0.1),
+      rgba(86, 207, 225, 0.1),
+      transparent
+    );
+    animation: rotate 10s linear infinite;
+    z-index: 0;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+export const MazeInnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 90%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+`;
+
+export const MazeRow = styled.div`
+  display: flex;
+  flex: 1;
+  gap: 2px;
+`;
+
+export const MazeCell = styled.div`
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  animation: cellAppear 0.5s ease-out;
+
+  @keyframes cellAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  /* Wall styles */
+  &.maze-cell--wall {
+    background: linear-gradient(135deg, #374151, #1f2937) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5),
+      0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    animation: wallAppear 0.6s ease-out;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+          45deg,
+          transparent 45%,
+          rgba(0, 0, 0, 0.2) 50%,
+          transparent 55%
+        ),
+        linear-gradient(
+          -45deg,
+          transparent 45%,
+          rgba(0, 0, 0, 0.2) 50%,
+          transparent 55%
+        );
+      background-size: 10px 10px;
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes wallAppear {
+    from {
+      opacity: 0;
+      transform: scale(1.2);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Player styles */
+  &.maze-cell--player {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    animation: playerPulse 2s ease-in-out infinite;
+    z-index: 3;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: radial-gradient(
+        circle,
+        rgba(59, 130, 246, 0.3) 0%,
+        transparent 70%
+      );
+      animation: playerGlow 2s ease-in-out infinite;
+      z-index: -1;
+    }
+  }
+
+  @keyframes playerPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  @keyframes playerGlow {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
+    }
+  }
+
+  /* Exit styles */
+  &.maze-cell--exit {
+    background: linear-gradient(135deg, #4ade80, #22c55e) !important;
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    animation: exitGlow 3s ease-in-out infinite;
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: radial-gradient(
+        circle,
+        rgba(34, 197, 94, 0.3) 0%,
+        transparent 70%
+      );
+      animation: exitPulse 3s ease-in-out infinite;
+      z-index: -1;
+    }
+  }
+
+  @keyframes exitGlow {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+    50% {
+      transform: scale(1.03);
+      box-shadow: 0 0 35px rgba(34, 197, 94, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  @keyframes exitPulse {
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Path styles */
+  &:not(.maze-cell--wall):not(.maze-cell--player):not(.maze-cell--exit) {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+`;
+
+export const MazePlaceholder = styled.div`
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(74, 107, 255, 0.4);
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: placeholderPulse 2s ease-in-out infinite;
+
+  @keyframes placeholderPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 20px rgba(74, 107, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 30px rgba(74, 107, 255, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.4rem;
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+    padding: 1rem;
+  }
+`;
+
+// Icon effects
+export const IconWrapper = styled.span`
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  animation: iconFloat 2s ease-in-out infinite;
+
+  @keyframes iconFloat {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
+
+  .maze-cell--wall & {
+    animation: wallShake 3s ease-in-out infinite;
+  }
+
+  @keyframes wallShake {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-1px) rotate(1deg);
+    }
+    75% {
+      transform: translateY(1px) rotate(-1deg);
+    }
+  }
+`;

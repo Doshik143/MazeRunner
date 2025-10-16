@@ -1,10 +1,10 @@
-import "./Header.css";
+import { HeaderContainer, HeaderTitle } from "./Header.styles";
 
 const Header = ({ title = "Maze Runner" }) => {
   return (
-    <header className="header">
-      <h1 className="header__title">{title}</h1>
-    </header>
+    <HeaderContainer>
+      <HeaderTitle>{title}</HeaderTitle>
+    </HeaderContainer>
   );
 };
 

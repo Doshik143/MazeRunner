@@ -1,8 +1,18 @@
 import { useForm } from "react-hook-form";
 import Button from "../../components/UI/Button/Button";
-import "./SettingsForm.css";
+import {
+  SettingsForm,
+  FormSection,
+  FormGroup,
+  FormSelect,
+  ErrorMessage,
+  RadioGroup,
+  RadioLabel,
+  RadioMark,
+  FormActions,
+} from "./SettingsForm.styles";
 
-const SettingsForm = ({ initialSettings, onSubmit, onCancel }) => {
+const SettingsFormComponent = ({ initialSettings, onSubmit, onCancel }) => {
   const {
     register,
     handleSubmit,
@@ -22,13 +32,13 @@ const SettingsForm = ({ initialSettings, onSubmit, onCancel }) => {
   };
 
   return (
-    <form className="settings-form" onSubmit={handleSubmit(handleFormSubmit)}>
-      <div className="form-section">
+    <SettingsForm onSubmit={handleSubmit(handleFormSubmit)}>
+      <FormSection>
         <h3>Налаштування гри</h3>
 
-        <div className="form-group">
+        <FormGroup>
           <label htmlFor="difficulty">Складність:</label>
-          <select
+          <FormSelect
             id="difficulty"
             {...register("difficulty", { required: "Оберіть складність" })}
             className={errors.difficulty ? "error" : ""}
@@ -36,39 +46,39 @@ const SettingsForm = ({ initialSettings, onSubmit, onCancel }) => {
             <option value="easy">Легка</option>
             <option value="medium">Середня</option>
             <option value="hard">Складна</option>
-          </select>
+          </FormSelect>
           {errors.difficulty && (
-            <span className="error-message">{errors.difficulty.message}</span>
+            <ErrorMessage>{errors.difficulty.message}</ErrorMessage>
           )}
-        </div>
+        </FormGroup>
 
-        <div className="form-group">
+        <FormGroup>
           <label>Керування:</label>
-          <div className="radio-group">
-            <label className="radio-label">
+          <RadioGroup>
+            <RadioLabel>
               <input type="radio" value="keyboard" {...register("controls")} />
-              <span className="radiomark"></span>
+              <RadioMark></RadioMark>
               Клавіатура
-            </label>
-            <label className="radio-label">
+            </RadioLabel>
+            <RadioLabel>
               <input type="radio" value="buttons" {...register("controls")} />
-              <span className="radiomark"></span>
+              <RadioMark></RadioMark>
               Кнопки
-            </label>
-          </div>
-        </div>
-      </div>
+            </RadioLabel>
+          </RadioGroup>
+        </FormGroup>
+      </FormSection>
 
-      <div className="form-actions">
+      <FormActions>
         <Button type="button" variant="secondary" onClick={handleCancel}>
           Скасувати
         </Button>
         <Button type="submit" variant="primary" disabled={!isDirty}>
           Зберегти
         </Button>
-      </div>
-    </form>
+      </FormActions>
+    </SettingsForm>
   );
 };
 
-export default SettingsForm;
+export default SettingsFormComponent;

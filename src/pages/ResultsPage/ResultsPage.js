@@ -2,7 +2,15 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Header from "../../components/layout/Header/Header";
 import Button from "../../components/UI/Button/Button";
 import { useGame } from "../../hooks/useGame";
-import "./ResultsPage.css";
+import {
+  ResultsContainer,
+  ResultsContent,
+  ResultsStats,
+  StatsGrid,
+  StatItem,
+  Actions,
+  ErrorMessage,
+} from "./ResultsPage.styles";
 
 const ResultsPage = () => {
   const { userId } = useParams();
@@ -33,54 +41,56 @@ const ResultsPage = () => {
 
   if (!gameResult && !finalGameState) {
     return (
-      <div className="results-page">
+      <ResultsContainer>
         <Header title="Maze Runner - Помилка" />
-        <main className="results-page__content">
-          <h2>Дані гри не знайдено</h2>
-          <p>Спробуйте розпочати гру знову</p>
-          <Button variant="primary" onClick={handleReturnToStart}>
-            На головну
-          </Button>
-        </main>
-      </div>
+        <ResultsContent>
+          <ErrorMessage>
+            <h2>Дані гри не знайдено</h2>
+            <p>Спробуйте розпочати гру знову</p>
+            <Button variant="primary" onClick={handleReturnToStart}>
+              На головну
+            </Button>
+          </ErrorMessage>
+        </ResultsContent>
+      </ResultsContainer>
     );
   }
 
   return (
-    <div className="results-page">
+    <ResultsContainer>
       <Header title="Maze Runner - Результати" />
 
-      <main className="results-page__content">
-        <div className="results-page__stats">
+      <ResultsContent>
+        <ResultsStats>
           <h2>Гру {isSuccess ? "успішно завершено! 🎉" : "перервано! ⏰"}</h2>
-          <div className="stats-grid">
-            <div className="stat-item">
+          <StatsGrid>
+            <StatItem>
               <span className="stat-label">Час:</span>
               <span className="stat-value">{time}с</span>
-            </div>
-            <div className="stat-item">
+            </StatItem>
+            <StatItem>
               <span className="stat-label">Кроки:</span>
               <span className="stat-value">{steps}</span>
-            </div>
-            <div className="stat-item">
+            </StatItem>
+            <StatItem>
               <span className="stat-label">Результат:</span>
-              <span className="stat-value">
+              <span className="stat-value result">
                 {isSuccess ? "Перемога! 🎉" : "Спробуйте ще! 💪"}
               </span>
-            </div>
-          </div>
-        </div>
+            </StatItem>
+          </StatsGrid>
+        </ResultsStats>
 
-        <div className="results-page__actions">
+        <Actions>
           <Button variant="primary" onClick={handleRestart}>
             Грати знову
           </Button>
           <Button variant="secondary" onClick={handleReturnToStart}>
             На головну
           </Button>
-        </div>
-      </main>
-    </div>
+        </Actions>
+      </ResultsContent>
+    </ResultsContainer>
   );
 };
 

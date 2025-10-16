@@ -1,4 +1,11 @@
-import "./MazeGrid.css";
+import {
+  MazeGridContainer,
+  MazeInnerContainer,
+  MazeRow,
+  MazeCell,
+  MazePlaceholder,
+  IconWrapper,
+} from "./MazeGrid.styles";
 
 const MazeGrid = ({
   maze = [],
@@ -17,30 +24,28 @@ const MazeGrid = ({
     if (isExit) cellClass += " maze-cell--exit";
 
     return (
-      <div key={cellIndex} className={cellClass}>
-        {isPlayer && "👤"}
-        {isExit && !isPlayer && "🚪"}
-        {isWall && !isPlayer && !isExit && "🧱"}
-      </div>
+      <MazeCell key={cellIndex} className={cellClass}>
+        {isPlayer && <IconWrapper>👤</IconWrapper>}
+        {isExit && !isPlayer && <IconWrapper>🚪</IconWrapper>}
+        {isWall && !isPlayer && !isExit && <IconWrapper>🧱</IconWrapper>}
+      </MazeCell>
     );
   };
 
   return (
-    <div className="maze-grid">
+    <MazeGridContainer>
       {maze.length > 0 ? (
-        <div className="maze-grid__container">
+        <MazeInnerContainer>
           {maze.map((row, rowIndex) => (
-            <div key={rowIndex} className="maze-row">
+            <MazeRow key={rowIndex}>
               {row.map((cell, cellIndex) => renderCell(rowIndex, cellIndex))}
-            </div>
+            </MazeRow>
           ))}
-        </div>
+        </MazeInnerContainer>
       ) : (
-        <div className="maze-grid__placeholder">
-          🎮 Лабіринт завантажується...
-        </div>
+        <MazePlaceholder>🎮 Лабіринт завантажується...</MazePlaceholder>
       )}
-    </div>
+    </MazeGridContainer>
   );
 };
 

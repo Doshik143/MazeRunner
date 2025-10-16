@@ -1,6 +1,10 @@
-import React from "react";
 import Button from "../../UI/Button/Button";
-import "./GameControls.css";
+import {
+  ControlsContainer,
+  ControlsTitle,
+  ControlsGrid,
+  ControlsHint,
+} from "./GameControls.styles";
 
 const GameControls = ({ onMove, activeDirection }) => {
   const directions = [
@@ -11,9 +15,9 @@ const GameControls = ({ onMove, activeDirection }) => {
   ];
 
   return (
-    <div className="game-controls">
-      <h3>Керування:</h3>
-      <div className="game-controls__grid">
+    <ControlsContainer>
+      <ControlsTitle>Керування:</ControlsTitle>
+      <ControlsGrid>
         {directions.map((direction) => (
           <Button
             key={direction.key}
@@ -26,11 +30,9 @@ const GameControls = ({ onMove, activeDirection }) => {
             {direction.label}
           </Button>
         ))}
-      </div>
-      <p className="game-controls__hint">
-        Або використовуй клавіші стрілок / WASD
-      </p>
-    </div>
+      </ControlsGrid>
+      <ControlsHint>Або використовуй клавіші стрілок / WASD</ControlsHint>
+    </ControlsContainer>
   );
 };
 

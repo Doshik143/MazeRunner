@@ -1,4 +1,4 @@
-import "./Button.css";
+import { StyledButton } from "./Button.styles";
 
 const Button = ({
   children,
@@ -7,13 +7,9 @@ const Button = ({
   disabled = false,
 }) => {
   return (
-    <button
-      className={`btn btn--${variant}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
+    <StyledButton variant={variant} onClick={onClick} disabled={disabled}>
       {children}
-    </button>
+    </StyledButton>
   );
 };
 
