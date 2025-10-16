@@ -99,28 +99,14 @@ export const GameInfo = styled.div`
 export const GameContent = styled.div`
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
   margin: 30px 0;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  animation: contentAppear 0.6s ease-out;
-
-  @keyframes contentAppear {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
 
   @media (max-width: 768px) {
-    margin: 20px 0;
-    padding: 15px;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
   }
 `;
 
@@ -128,17 +114,12 @@ export const ControlSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
-  margin-top: 30px;
-  padding: 25px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
+  gap: 25px;
+  margin-top: 20px;
 
   & > div {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     flex-wrap: wrap;
     justify-content: center;
     animation: buttonsAppear 0.6s ease-out 0.3s both;
@@ -155,19 +136,75 @@ export const ControlSection = styled.div`
     }
   }
 
-  @media (max-width: 768px) {
-    gap: 25px;
-    padding: 20px;
+  ${(props) =>
+    props.$hasControls &&
+    `
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
 
-    & > div {
-      gap: 15px;
+    @media (max-width: 768px) {
       flex-direction: column;
       align-items: center;
     }
+  `}
+`;
+
+export const GameWithControls = styled.div`
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+export const MazeContainer = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+`;
+
+export const ControlsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 300px;
+
+  @media (max-width: 768px) {
+    min-width: auto;
+    width: 100%;
+    max-width: 300px;
+  }
+`;
+
+export const ActionButtonsContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+  animation: buttonsAppear 0.6s ease-out 0.3s both;
+
+  @keyframes buttonsAppear {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  @media (max-width: 480px) {
-    gap: 20px;
-    padding: 15px;
+  @media (max-width: 768px) {
+    max-width: 100%;
   }
 `;

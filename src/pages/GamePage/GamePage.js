@@ -14,6 +14,9 @@ import {
   GameInfo,
   GameContent,
   ControlSection,
+  GameWithControls,
+  MazeContainer,
+  ControlsContainer,
 } from "./GamePage.styles";
 
 const GamePage = () => {
@@ -102,31 +105,52 @@ const GamePage = () => {
           </span>
         </GameInfo>
 
-        <GameContent>
-          <MazeGrid
-            maze={gameState.maze}
-            playerPosition={gameState.playerPosition}
-            exitPosition={gameState.exitPosition}
-          />
-        </GameContent>
-
-        <ControlSection>
-          {settings.controls === "buttons" && (
-            <GameControls
-              onMove={handleManualMove}
-              activeDirection={activeDirection}
+        {settings.controls === "buttons" ? (
+          <GameWithControls>
+            <MazeContainer>
+              <MazeGrid
+                maze={gameState.maze}
+                playerPosition={gameState.playerPosition}
+                exitPosition={gameState.exitPosition}
+              />
+            </MazeContainer>
+            <ControlsContainer>
+              <GameControls
+                onMove={handleManualMove}
+                activeDirection={activeDirection}
+              />
+              <div>
+                <Button variant="secondary" onClick={handleReturnToStart}>
+                  На головну
+                </Button>
+                <Button variant="primary" onClick={handleEndGame}>
+                  Завершити гру
+                </Button>
+              </div>
+            </ControlsContainer>
+          </GameWithControls>
+        ) : (
+          <GameContent>
+            <MazeGrid
+              maze={gameState.maze}
+              playerPosition={gameState.playerPosition}
+              exitPosition={gameState.exitPosition}
             />
-          )}
+          </GameContent>
+        )}
 
-          <div>
-            <Button variant="secondary" onClick={handleReturnToStart}>
-              На головну
-            </Button>
-            <Button variant="primary" onClick={handleEndGame}>
-              Завершити гру
-            </Button>
-          </div>
-        </ControlSection>
+        {settings.controls !== "buttons" && (
+          <ControlSection>
+            <div>
+              <Button variant="secondary" onClick={handleReturnToStart}>
+                На головну
+              </Button>
+              <Button variant="primary" onClick={handleEndGame}>
+                Завершити гру
+              </Button>
+            </div>
+          </ControlSection>
+        )}
       </Card>
 
       <GameOverDialog

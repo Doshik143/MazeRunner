@@ -40,12 +40,52 @@ export const ControlsTitle = styled.h3`
 
 export const ControlsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 0.8rem;
-  width: 100%;
-  max-width: 200px;
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(3, auto);
+  gap: 1px;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto;
+  position: relative;
+
+  button {
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  button:nth-child(1) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  button:nth-child(2) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  button:nth-child(3) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  button:nth-child(4) {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  @media (max-width: 480px) {
+    button {
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+    }
+    gap: 1px;
+  }
 `;
 
 export const ControlButton = styled.button`
