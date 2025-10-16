@@ -208,6 +208,53 @@ export const useGame = () => {
     return Math.floor((endTime - gameState.startTime) / 1000);
   };
 
+  const saveGameResult = useCallback((userId, stats) => {
+    const userStats = JSON.parse(
+      localStorage.getItem(`mazeStats_${userId}`) || "{}"
+    );
+
+    userStats.gamesPlayed = (userStats.gamesPlayed || 0) + 1;
+    userStats.bestTime = userStats.bestTime
+      ? Math.min(userStats.bestTime, stats.time)
+      : stats.time;
+    userStats.bestSteps = userStats.bestSteps
+      ? Math.min(userStats.bestSteps, stats.steps)
+      : stats.steps;
+
+    userStats.gameHistory = userStats.gameHistory || [];
+    userStats.gameHistory.push({
+      date: new Date().toISOString(),
+      difficulty: stats.difficulty,
+      time: stats.time,
+      steps: stats.steps,
+      completed: stats.completed,
+    });
+
+    userStats.gameHistory = userStats.gameHistory.slice(-50);
+
+    const completedGames = userStats.gameHistory.filter(
+      (game) => game.completed
+    ).length;
+    userStats.completionRate = Math.round(
+      (completedGames / userStats.gameHistory.length) * 100
+    );
+
+    const difficultyCount = {};
+    userStats.gameHistory.forEach((game) => {
+      difficultyCount[game.difficulty] =
+        (difficultyCount[game.difficulty] || 0) + 1;
+    });
+    userStats.favoriteDifficulty = Object.keys(difficultyCount).reduce((a, b) =>
+      difficultyCount[a] > difficultyCount[b] ? a : b
+    );
+
+    localStorage.setItem(`mazeStats_${userId}`, JSON.stringify(userStats));
+  }, []);
+
+  const getUserStats = useCallback((userId) => {
+    return JSON.parse(localStorage.getItem(`mazeStats_${userId}`) || "{}");
+  }, []);
+
   return {
     gameState,
     startGame,
@@ -215,5 +262,7 @@ export const useGame = () => {
     endGame,
     resetGame,
     getGameTime,
+    saveGameResult,
+    getUserStats,
   };
 };

@@ -1,14 +1,20 @@
 import { useState } from "react";
-import Header from "../../components/layout/Header/Header";
-import Button from "../../components/UI/Button/Button";
-import Modal from "../../components/UI/Modal/Modal";
-import SettingsForm from "../../components/forms/SettingsForm"; // Додати /SettingsForm
+import { useNavigate, useParams } from "react-router-dom";
 import { useSettings } from "../../context/SettingsContext";
-import "./StartPage.css";
+import Modal from "../../components/UI/Modal/Modal";
+import SettingsForm from "../../components/forms/SettingsForm";
+import { PageContainer, Card, Button } from "../../App.styles";
+import {
+  StartPageContainer,
+  WelcomeSection,
+  ActionButtons,
+} from "./StartPage.styles";
 
-const StartPage = ({ onStartGame }) => {
+const StartPage = () => {
   const [showSettings, setShowSettings] = useState(false);
   const { settings, updateSettings } = useSettings();
+  const navigate = useNavigate();
+  const { userId = "default" } = useParams();
 
   const handleSettingsSubmit = (newSettings) => {
     updateSettings(newSettings);
@@ -16,49 +22,57 @@ const StartPage = ({ onStartGame }) => {
   };
 
   const handleStartGame = () => {
-    onStartGame();
+    navigate(`/user/${userId}/game`);
+  };
+
+  const handleProfile = () => {
+    navigate(`/user/${userId}/profile`);
   };
 
   return (
-    <div className="start-page">
-      <Header title="Maze Runner - Start" />
+    <StartPageContainer>
+      <PageContainer>
+        <Card>
+          <WelcomeSection>
+            <h1>Maze Runner 🎮</h1>
+            <p>Welcome до лабіринту, #{userId}!</p>
+            <p>
+              Поточні налаштування:{" "}
+              {settings.difficulty === "easy"
+                ? "Легка"
+                : settings.difficulty === "medium"
+                ? "Середня"
+                : "Складна"}{" "}
+              складність
+            </p>
+          </WelcomeSection>
 
-      <main className="start-page__content">
-        <div className="start-page__welcome">
-          <h2>Welcome до лабіринту!</h2>
-          <p>
-            Поточні налаштування:{" "}
-            {settings.difficulty === "easy"
-              ? "Легка"
-              : settings.difficulty === "medium"
-              ? "Середня"
-              : "Складна"}{" "}
-            складність
-          </p>
-        </div>
+          <ActionButtons>
+            <Button variant="primary" onClick={handleStartGame}>
+              Почати гру
+            </Button>
+            <Button variant="secondary" onClick={() => setShowSettings(true)}>
+              Налаштування
+            </Button>
+            <Button variant="secondary" onClick={handleProfile}>
+              Профіль
+            </Button>
+          </ActionButtons>
+        </Card>
 
-        <div className="start-page__actions">
-          <Button variant="primary" onClick={handleStartGame}>
-            Почати гру
-          </Button>
-          <Button variant="secondary" onClick={() => setShowSettings(true)}>
-            Налаштування
-          </Button>
-        </div>
-      </main>
-
-      <Modal
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        title="Налаштування гри"
-      >
-        <SettingsForm
-          initialSettings={settings}
-          onSubmit={handleSettingsSubmit}
-          onCancel={() => setShowSettings(false)}
-        />
-      </Modal>
-    </div>
+        <Modal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          title="Налаштування гри"
+        >
+          <SettingsForm
+            initialSettings={settings}
+            onSubmit={handleSettingsSubmit}
+            onCancel={() => setShowSettings(false)}
+          />
+        </Modal>
+      </PageContainer>
+    </StartPageContainer>
   );
 };
 

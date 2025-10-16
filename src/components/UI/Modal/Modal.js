@@ -1,7 +1,13 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import Button from "../Button/Button";
-import "./Modal.css";
+import {
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalBody,
+} from "./Modal.styles";
 
 const Modal = ({
   isOpen,
@@ -38,11 +44,11 @@ const Modal = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <ModalOverlay onClick={onClose}>
+      <ModalContent onClick={(e) => e.stopPropagation()}>
         {(title || showCloseButton) && (
-          <div className="modal-header">
-            {title && <h2 className="modal-title">{title}</h2>}
+          <ModalHeader>
+            {title && <ModalTitle>{title}</ModalTitle>}
             {showCloseButton && (
               <Button
                 variant="secondary"
@@ -52,11 +58,11 @@ const Modal = ({
                 ×
               </Button>
             )}
-          </div>
+          </ModalHeader>
         )}
-        <div className="modal-body">{children}</div>
-      </div>
-    </div>,
+        <ModalBody>{children}</ModalBody>
+      </ModalContent>
+    </ModalOverlay>,
     document.getElementById("modal-root")
   );
 };
