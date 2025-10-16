@@ -1,21 +1,21 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createSlice } from "@reduxjs/toolkit";
 
-const UserStatsContext = createContext();
+const loadStatsFromStorage = () => {
+  const savedStats = localStorage.getItem("mazeRunnerStats");
+  return savedStats ? JSON.parse(savedStats) : {};
+};
 
-export const UserStatsProvider = ({ children }) => {
-  const [userStats, setUserStats] = useState({});
+const gameStatsSlice = createSlice({
+  name: "gameStats",
+  initialState: {
+    stats: loadStatsFromStorage(),
+  },
+  reducers: {
+    updateUserStats: (state, action) => {
+      const { userId, gameResult } = action.payload;
+      console.log("🔄 Оновлення статистики для:", userId, gameResult);
 
-  useEffect(() => {
-    const savedStats = localStorage.getItem("mazeRunnerStats");
-    if (savedStats) {
-      setUserStats(JSON.parse(savedStats));
-    }
-  }, []);
-
-  const updateUserStats = (userId, gameResult) => {
-    console.log("Оновлення статистики для:", userId, gameResult);
-    setUserStats((prevStats) => {
-      const userCurrentStats = prevStats[userId] || {
+      const userCurrentStats = state.stats[userId] || {
         gamesPlayed: 0,
         gamesWon: 0,
         bestTime: null,
@@ -41,43 +41,24 @@ export const UserStatsProvider = ({ children }) => {
         totalTime: userCurrentStats.totalTime + gameResult.time,
       };
 
-      const updatedStats = {
-        ...prevStats,
-        [userId]: newStats,
-      };
+      state.stats[userId] = newStats;
+      localStorage.setItem("mazeRunnerStats", JSON.stringify(state.stats));
+      console.log("📊 Нова статистика:", newStats);
+    },
+  },
+});
 
-      localStorage.setItem("mazeRunnerStats", JSON.stringify(updatedStats));
-      console.log("Нова статистика:", newStats);
-      return updatedStats;
-    });
+export const { updateUserStats } = gameStatsSlice.actions;
+
+export const selectAllStats = (state) => state.gameStats.stats;
+export const selectUserStats = (state, userId) =>
+  state.gameStats.stats[userId] || {
+    gamesPlayed: 0,
+    gamesWon: 0,
+    bestTime: null,
+    bestSteps: null,
+    totalSteps: 0,
+    totalTime: 0,
   };
 
-  const getUserStats = (userId) => {
-    return (
-      userStats[userId] || {
-        gamesPlayed: 0,
-        gamesWon: 0,
-        bestTime: null,
-        bestSteps: null,
-        totalSteps: 0,
-        totalTime: 0,
-      }
-    );
-  };
-
-  return (
-    <UserStatsContext.Provider
-      value={{ userStats, updateUserStats, getUserStats }}
-    >
-      {children}
-    </UserStatsContext.Provider>
-  );
-};
-
-export const useUserStats = () => {
-  const context = useContext(UserStatsContext);
-  if (!context) {
-    throw new Error("useUserStats must be used within a UserStatsProvider");
-  }
-  return context;
-};
+export default gameStatsSlice.reducer;

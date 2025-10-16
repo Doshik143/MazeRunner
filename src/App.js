@@ -4,12 +4,13 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { SettingsProvider } from "./context/SettingsContext";
-import { UserStatsProvider } from "./context/UserStatsContext";
+import { Provider } from "react-redux";
+import store from "./store";
 import StartPage from "./pages/StartPage/StartPage";
 import GamePage from "./pages/GamePage/GamePage";
 import ResultsPage from "./pages/ResultsPage/ResultsPage";
 import UserProfile from "./pages/UserProfile/UserProfile";
+import ResultsTable from "./pages/ResultsTable/ResultsTable";
 import { AppContainer } from "./App.styles";
 
 const generateUserId = () => {
@@ -18,25 +19,27 @@ const generateUserId = () => {
 
 function App() {
   return (
-    <SettingsProvider>
-      <UserStatsProvider>
-        <Router>
-          <AppContainer>
-            <Routes>
-              <Route
-                path="/"
-                element={<Navigate to={`/user/${generateUserId()}`} replace />}
-              />
-              <Route path="/user/:userId" element={<StartPage />} />
-              <Route path="/user/:userId/game" element={<GamePage />} />
-              <Route path="/user/:userId/results" element={<ResultsPage />} />
-              <Route path="/user/:userId/profile" element={<UserProfile />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </AppContainer>
-        </Router>
-      </UserStatsProvider>
-    </SettingsProvider>
+    <Provider store={store}>
+      <Router>
+        <AppContainer>
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to={`/user/${generateUserId()}`} replace />}
+            />
+            <Route path="/user/:userId" element={<StartPage />} />
+            <Route path="/user/:userId/game" element={<GamePage />} />
+            <Route path="/user/:userId/results" element={<ResultsPage />} />
+            <Route path="/user/:userId/profile" element={<UserProfile />} />
+            <Route
+              path="/user/:userId/leaderboard"
+              element={<ResultsTable />}
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AppContainer>
+      </Router>
+    </Provider>
   );
 }
 

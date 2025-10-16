@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { useGame } from "../../hooks/useGame";
 import { useGameControls } from "../../hooks/useGameControls";
-import { useSettings } from "../../context/SettingsContext";
-import { useUserStats } from "../../context/UserStatsContext";
+import { selectSettings } from "../../store/slices/settingsSlice";
+import { updateUserStats } from "../../store/slices/gameStatsSlice";
 import MazeGrid from "../../components/game/MazeGrid/MazeGrid";
 import GameControls from "../../components/game/GameControls/GameControls";
 import GameOverDialog from "../../components/game/GameOverDialog/GameOverDialog";
@@ -18,8 +19,8 @@ import {
 const GamePage = () => {
   const { userId = "default" } = useParams();
   const navigate = useNavigate();
-  const { settings } = useSettings();
-  const { updateUserStats } = useUserStats();
+  const dispatch = useDispatch();
+  const settings = useSelector(selectSettings);
   const { gameState, movePlayer, endGame, getGameTime, startGame } = useGame();
   const { activeDirection, handleButtonMove } = useGameControls(movePlayer);
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
@@ -61,7 +62,7 @@ const GamePage = () => {
     };
 
     console.log("Збереження результатів:", gameResult);
-    updateUserStats(userId, gameResult);
+    dispatch(updateUserStats({ userId, gameResult }));
 
     navigate(`/user/${userId}/results`, {
       state: {

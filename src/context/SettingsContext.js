@@ -1,55 +1,42 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createSlice } from "@reduxjs/toolkit";
 
-const defaultSettings = {
-  difficulty: "medium",
-  controls: "keyboard",
+const loadSettingsFromStorage = () => {
+  const savedSettings = localStorage.getItem("mazeRunnerSettings");
+  return savedSettings
+    ? JSON.parse(savedSettings)
+    : {
+        difficulty: "medium",
+        controls: "keyboard",
+      };
 };
 
-const SettingsContext = createContext();
+const settingsSlice = createSlice({
+  name: "settings",
+  initialState: loadSettingsFromStorage(),
+  reducers: {
+    updateSettings: (state, action) => {
+      const newSettings = { ...state, ...action.payload };
+      localStorage.setItem("mazeRunnerSettings", JSON.stringify(newSettings));
+      return newSettings;
+    },
+    resetSettings: (state) => {
+      const defaultSettings = {
+        difficulty: "medium",
+        controls: "keyboard",
+      };
+      localStorage.setItem(
+        "mazeRunnerSettings",
+        JSON.stringify(defaultSettings)
+      );
+      return defaultSettings;
+    },
+  },
+});
 
-export const SettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState(defaultSettings);
+export const { updateSettings, resetSettings } = settingsSlice.actions;
 
-  useEffect(() => {
-    const savedSettings = localStorage.getItem("mazeRunnerSettings");
-    if (savedSettings) {
-      try {
-        setSettings(JSON.parse(savedSettings));
-      } catch (error) {
-        console.error("Помилка завантаження налаштувань:", error);
-      }
-    }
-  }, []);
+export const selectSettings = (state) => state.settings;
+export const selectDifficulty = (state) => state.settings.difficulty;
+export const selectControls = (state) => state.settings.controls;
 
-  useEffect(() => {
-    localStorage.setItem("mazeRunnerSettings", JSON.stringify(settings));
-  }, [settings]);
-
-  const updateSettings = (newSettings) => {
-    setSettings((prev) => ({ ...prev, ...newSettings }));
-  };
-
-  const resetSettings = () => {
-    setSettings(defaultSettings);
-  };
-
-  return (
-    <SettingsContext.Provider
-      value={{
-        settings,
-        updateSettings,
-        resetSettings,
-      }}
-    >
-      {children}
-    </SettingsContext.Provider>
-  );
-};
-
-export const useSettings = () => {
-  const context = useContext(SettingsContext);
-  if (!context) {
-    throw new Error("useSettings must be used within a SettingsProvider");
-  }
-  return context;
-};
+export default settingsSlice.reducer;

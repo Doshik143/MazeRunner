@@ -9,11 +9,11 @@ const gameStatsSlice = createSlice({
   name: "gameStats",
   initialState: {
     stats: loadStatsFromStorage(),
-    currentGame: null,
   },
   reducers: {
     updateUserStats: (state, action) => {
       const { userId, gameResult } = action.payload;
+      console.log("🔄 Оновлення статистики для:", userId, gameResult);
 
       const userCurrentStats = state.stats[userId] || {
         gamesPlayed: 0,
@@ -43,16 +43,22 @@ const gameStatsSlice = createSlice({
 
       state.stats[userId] = newStats;
       localStorage.setItem("mazeRunnerStats", JSON.stringify(state.stats));
-    },
-    setCurrentGame: (state, action) => {
-      state.currentGame = action.payload;
-    },
-    clearCurrentGame: (state) => {
-      state.currentGame = null;
+      console.log("📊 Нова статистика:", newStats);
     },
   },
 });
 
-export const { updateUserStats, setCurrentGame, clearCurrentGame } =
-  gameStatsSlice.actions;
+export const { updateUserStats } = gameStatsSlice.actions;
+
+export const selectAllStats = (state) => state.gameStats.stats;
+export const selectUserStats = (state, userId) =>
+  state.gameStats.stats[userId] || {
+    gamesPlayed: 0,
+    gamesWon: 0,
+    bestTime: null,
+    bestSteps: null,
+    totalSteps: 0,
+    totalTime: 0,
+  };
+
 export default gameStatsSlice.reducer;
